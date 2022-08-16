@@ -7,25 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Follower {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  follower   User   @relation(fields: [followerId], references: [id])
-  followerId String
-}
-
-model Following {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  following   User   @relation(fields: [followingId], references: [id])
-  followingId String
-}
-
 model User {
-  id             String      @id @default(auto()) @map("_id") @db.ObjectId
-  username       String      @unique
-  email          String      @unique
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  username       String   @unique
+  email          String   @unique
   password       String
-  profilePicture String      @default("")
-  coverPicture   String?     @default("")
-  followers      Follower[]
-  following      Following[]
+  profilePicture String   @default("")
+  coverPicture   String?  @default("")
+  followedBy     User[]   @relation("UserFollows", fields: [followedByIds], references: [id])
+  following      User[]   @relation("UserFollows", fields: [followingIDs], references: [id])
+  followingIDs   String[] @db.ObjectId
+  followedByIds  String[] @db.ObjectId
+  isAdmin        Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
