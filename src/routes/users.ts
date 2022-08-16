@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
 import express from 'express';
 import bcrypt from 'bcrypt';
-import { withExclude } from 'prisma-exclude';
+import { prismaExclude } from 'prisma-exclude';
+import prisma from '../../prisma/prisma';
 export const usersRoute = express.Router();
 
-const prisma = withExclude(new PrismaClient());
+const exclude = prismaExclude(prisma);
 
 // Update user
 usersRoute.put('/:id', async (req, res) => {
@@ -94,7 +94,7 @@ usersRoute.get('/:id', async (req, res) => {
         where: {
           id
         },
-        select: prisma.$exclude('user', ['password', 'updatedAt'])
+        select: exclude('user', ['password', 'updatedAt'])
       });
       res.status(200).json(user);
     } catch (error) {
@@ -102,5 +102,109 @@ usersRoute.get('/:id', async (req, res) => {
     }
   } else {
     return res.status(403).json({ message: 'User not found!' });
+  }
+});
+
+// Follow to user
+usersRoute.put('/:id/follow', async (req, res) => {
+  const { userId } = req.body;
+  const { id } = req.params;
+
+  if (userId !== id) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id
+        }
+      });
+      const currentUser = await prisma.user.findUnique({
+        where: {
+          id: userId
+        }
+      });
+      if (!user?.followedByIds.includes(userId)) {
+        await prisma.user.update({
+          where: {
+            id
+          },
+          data: {
+            followedByIds: {
+              push: userId
+            }
+          }
+        });
+        await prisma.user.update({
+          where: {
+            id: userId
+          },
+          data: {
+            followingIDs: {
+              push: id
+            }
+          }
+        });
+        res
+          .status(200)
+          .json({ message: `You follow to ${currentUser?.username}` });
+      } else {
+        res
+          .status(403)
+          .json({ message: `You already follow to ${currentUser?.username}` });
+      }
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  } else {
+    return res.status(403).json({ message: 'You cannot follow yourself!' });
+  }
+});
+
+// Unfollow user
+usersRoute.put('/:id/unfollow', async (req, res) => {
+  const { userId } = req.body;
+  const { id } = req.params;
+
+  if (userId !== id) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id
+        }
+      });
+      const currentUser = await prisma.user.findUnique({
+        where: {
+          id: userId
+        }
+      });
+      if (user?.followedByIds.includes(userId)) {
+        await prisma.user.update({
+          where: {
+            id
+          },
+          data: {
+            followedByIds: user?.followingIDs.filter((id) => id !== userId)
+          }
+        });
+        await prisma.user.update({
+          where: {
+            id: userId
+          },
+          data: {
+            followingIDs: currentUser?.followedByIds.filter((id) => id !== id)
+          }
+        });
+        res
+          .status(200)
+          .json({ message: `You unfollow from ${currentUser?.username}` });
+      } else {
+        res
+          .status(403)
+          .json({ message: `You don't follow to ${currentUser?.username}` });
+      }
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  } else {
+    return res.status(403).json({ message: 'You cannot unfollow yourself!' });
   }
 });
