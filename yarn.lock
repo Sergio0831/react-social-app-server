@@ -756,6 +756,11 @@ path-to-regexp@0.1.7:
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-0.1.7.tgz#df604178005f522f15eb4490e7247a1bfaa67f8c"
   integrity sha512-5DFkuoqlv1uYQKxy8omFBeJPQcdoE07Kv2sferDCrAq1ohOU+MSDswDIbnx3YAM60qIOnYa53wBhXW0EbMonrQ==
 
+prisma-exclude@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/prisma-exclude/-/prisma-exclude-1.0.2.tgz#41e0c9d174e91e773fef216d8b2837847531edd4"
+  integrity sha512-RgyL8i55Fzig49e5qJHJsmKCtgfsy0IvMYu4577B+ZhYA6+n4qo/EgV0H9kzjPhrB1BCtPGmws+/HYsmsz3dgQ==
+
 prisma@^4.2.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/prisma/-/prisma-4.2.1.tgz#3558359f15021aa4767de8c6d0ca1f285cf33d65"
