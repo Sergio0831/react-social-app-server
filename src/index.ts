@@ -1,3 +1,4 @@
+import { postsRoute } from './routes/posts';
 import { usersRoute, authRoute } from './routes';
 import express from 'express';
 import helmet from 'helmet';
@@ -11,6 +12,7 @@ app.use(morgan('common'));
 
 app.use('/api/users', usersRoute);
 app.use('/api/auth', authRoute);
+app.use('/api/posts', postsRoute);
 
 const server = app.listen(4000, () => {
   console.log(`🚀 Server ready at: http://localhost:4000`);
