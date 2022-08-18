@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/controllers/*": ["src/controllers/*"],
+      "@/routes/*": ["src/routes/*"],
+      "@/prisma/*": ["prisma/*"]
+    },
     "sourceMap": true,
     "outDir": "dist",
     "strict": true,
